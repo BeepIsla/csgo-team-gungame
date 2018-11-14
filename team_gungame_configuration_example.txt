@@ -1,3 +1,5 @@
+// This file has to be within the root "sourcemod" folder. "<serverPath>\csgo\addons\sourcemod"
+//
 // Argument 1: Weapon
 // -> Weapon entity name but without "weapon_" prefix. Eg ("awp" instead of "weapon_awp")
 // Argument 2: Kills
