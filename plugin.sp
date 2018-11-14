@@ -3,6 +3,13 @@
 #include <cstrike>
 #include <sdktools>
 
+public Plugin myinfo = {
+	name		= "Team GunGame",
+	author		= "github.com/BeepFelix",
+	description	= "Basically Arms-Race but your entire team has the same weapon",
+	version		= "1.0"
+};
+
 // Weapon tracking constants (Never change throughout the match)
 CSWeaponID weaponLevels[512]; // To track which weapon we are on and which is next. Maximum 512 weapons. Who would need more anyways
 new String:rawWeaponLevels[512][512]; // To track which weapon we are on as raw weapon name.
