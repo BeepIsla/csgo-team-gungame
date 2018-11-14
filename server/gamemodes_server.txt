@@ -1,0 +1,41 @@
+"Gamemodes_Server.txt"
+{
+    "gameTypes"
+    {
+        "classic"
+        {
+            "gameModes"
+            {
+                "casual"
+                {
+                    "maxplayers" "20"
+                    "exec"
+                    {
+                        "exec"    "gamemode_custom_server.cfg"
+                    }
+                    "mapgroupsMP"
+                    {
+                        "mg_mapgroup"    ""
+                    }
+                }
+            }
+        }
+    }
+    "mapgroups"
+    {
+        "mg_mapgroup"
+        {
+            "name" "mg_mapgroup"
+            "maps"
+            {
+                "de_inferno" "0"
+                "de_train" "1"
+                "de_mirage" "2"
+                "de_nuke" "3"
+                "de_dust2" "4"
+                "de_overpass" "5"
+                "de_cache" "6"
+            }
+        }
+    }
+}

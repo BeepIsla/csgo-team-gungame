@@ -1,0 +1,24 @@
+// Argument 1: Weapon
+// -> Weapon entity name but without "weapon_" prefix. Eg ("awp" instead of "weapon_awp")
+// Argument 2: Kills
+// -> EITHER: Integer (5) determining the amount of kills required to upgrade to the next weapon
+// -> OR: Integer range (1-10) determining the random amount of kills required to upgrade to the next weapon
+// -> OR: Integers with comma delimiter (5,10,20) one of those values will be randomly chosen and will determine the amount of kills required to upgrade to the next weapon
+// Argument 3: Chance
+// -> The chance of this weapon to be included in the weapon cycle. Between 1 and 100.
+//
+// Randomness will be determined upon map start
+//
+// Comments ONLY support double slash (//)
+// Slash-Star (/*) is NOT support
+//
+// Example:
+// deagle 1-5 25 - Deagle requires between 1 and 5 kills with a 25% chance of being included
+// awp 5-10 100 - AWP requires between 5 and 10 kills with a 100% chance of being included
+// sg556 2 50 - SG 553 (sg556 is the entity name) requires 2 kills with a 50% chance of being included
+// mp5sd 5,10,15 73 - MP5-SD requires either 5, 10 or 15 kills with a 73% chance of being included
+
+deagle 1-5 25 // Deagle requires between 1 and 5 kills with a 25% chance of being included
+awp 5-10 100 // AWP requires between 5 and 10 kills with a 100% chance of being included
+sg556 2 50 // SG 553 (sg556 is the entity name) requires 2 kills with a 50% chance of being included
+mp5sd 5,10,15 73 // MP5-SD requires either 5, 10 or 15 kills with a 73% chance of being included
