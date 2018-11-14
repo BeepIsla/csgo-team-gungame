@@ -12,7 +12,7 @@
 // Randomness will be determined upon map start
 //
 // Comments ONLY support double slash (//)
-// Slash-Star (/*) is NOT support
+// Slash-Star (/*) is NOT supported
 //
 // Example:
 // deagle 1-5 25 - Deagle requires between 1 and 5 kills with a 25% chance of being included
