@@ -161,6 +161,7 @@ public void OnMapStart() {
 			// Log
 			LogMessage("Added %s as ID %d with %d kills required", arguments[0], weaponID, killsRequired);
 		}
+		fileHandle.Close();
 	}
 
 	if (weaponAmount <= 0) {
