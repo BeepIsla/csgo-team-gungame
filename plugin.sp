@@ -3,6 +3,9 @@
 #include <cstrike>
 #include <sdktools>
 
+#pragma semicolon 1
+#pragma newdecls required
+
 public Plugin myinfo = {
 	name		= "Team GunGame",
 	author		= "github.com/BeepFelix",
@@ -12,7 +15,7 @@ public Plugin myinfo = {
 
 // Weapon tracking constants (Never change throughout the match)
 CSWeaponID weaponLevels[512]; // To track which weapon we are on and which is next. Maximum 512 weapons. Who would need more anyways
-new String:rawWeaponLevels[512][512]; // To track which weapon we are on as raw weapon name.
+char rawWeaponLevels[512][512]; // To track which weapon we are on as raw weapon name.
 int weaponKills[512]; // To track how many kills are required with that weapon.
 int internalIdentifiers[512]; // For randomization
 int weaponAmount = 0; // To track the amount of weapons in our array above.
@@ -43,9 +46,9 @@ public void OnPluginStart() {
 	HookEvent("round_start", Event_RoundStart);
 
 	// Strip notify flag from max rounds
-	new flags = GetConVarFlags(maxRounds);
+	int flags = maxRounds.Flags;
 	flags &= ~FCVAR_NOTIFY;
-	SetConVarFlags(maxRounds, flags);
+	maxRounds.Flags = flags;
 
 	AutoExecConfig(true, "teamgungame");
 }
@@ -87,8 +90,8 @@ public void OnMapStart() {
 	weaponAmount = 0;
 
 	// Read configuration file if exists
-	new String:path[PLATFORM_MAX_PATH];
-	new String:line[1024];
+	char path[PLATFORM_MAX_PATH];
+	char line[1024];
 
 	BuildPath(Path_SM, path, PLATFORM_MAX_PATH, "team_gungame_configuration.txt");
 
@@ -101,13 +104,13 @@ public void OnMapStart() {
 		weaponAmount = 1;
 	} else {
 		// Open file and parse it
-		new Handle:fileHandle = OpenFile(path, "r");
+		File fileHandle = OpenFile(path, "r");
 		while (!IsEndOfFile(fileHandle) && ReadFileLine(fileHandle, line, sizeof(line))) {
 			TrimString(line);
 			if (strlen(line) <= 0) continue;
 
 			// Split line into arguments
-			new String:arguments[64][64];
+			char arguments[64][64];
 			int amount = ExplodeString(line, " ", arguments, sizeof(arguments), sizeof(arguments[]));
 			if (amount < 3) continue; // We should always have at least 3 arguments. 0 = WeaponID, 1 = Amount, 2 = Chance
 
@@ -125,12 +128,12 @@ public void OnMapStart() {
 			// Parse kills (Can be "1-5" or "3")
 			int killsRequired = -1;
 			if (StrContains(arguments[1], "-", true) != -1) { // 5-10
-				new String:values[64][64];
+				char values[64][64];
 				amount = ExplodeString(arguments[1], "-", values, sizeof(values), sizeof(values[]));
 				if (amount < 2) continue; // We should always have at least 2 arguments. 0 = Min kills, 1 = Max kills
 				killsRequired = GetRandomInt(StringToInt(values[0]), StringToInt(values[1]));
 			} else if (StrContains(arguments[1], ",", true) != -1) { // 5,10,15
-				new String:killsRequired_ary_og[64][64];
+				char killsRequired_ary_og[64][64];
 				int killsRequired_ary[64];
 				amount = ExplodeString(arguments[1], ",", killsRequired_ary_og, sizeof(killsRequired_ary_og), sizeof(killsRequired_ary_og[]));
 				for (int i = 0; i < amount; i++) {
@@ -188,7 +191,7 @@ public void OnMapStart() {
 
 		// Sort all the other arrays to match with the "internalIdentifiers" array
 		CSWeaponID weaponLevels_copy[512];
-		new String:rawWeaponLevels_copy[512][512];
+		char rawWeaponLevels_copy[512][512];
 		int weaponKills_copy[512];
 
 		for (int i = 0; i < weaponAmount; i++) {
@@ -209,11 +212,11 @@ public void OnMapStart() {
 }
 
 public Action WeaponProgressDisplay(Handle timer) {
-	new String:CTTeamString[512];
-	new String:TTeamString[512];
-	new String:SpecTeamString[512];
-	new String:CTColor[7] = "#909CA7"; // Blueish color
-	new String:TColor[7] = "#C9B983"; // Yellowish color
+	char CTTeamString[512];
+	char TTeamString[512];
+	char SpecTeamString[512];
+	char CTColor[7] = "#909CA7"; // Blueish color
+	char TColor[7] = "#C9B983"; // Yellowish color
 
 	// Each team gets their own string, so it is properly sorted. Your own team is at the top the enemy team is at the bottom
 	Format(CTTeamString, sizeof(CTTeamString), "Kills: %d/%d\n<font color=\"%s\">Level: %d/%d</font>\n<font color=\"%s\">Level: %d/%d</font>", ctKills, weaponKills[ctLevel], CTColor, (ctLevel + 1), weaponAmount, TColor, (tLevel + 1), weaponAmount);
@@ -264,8 +267,8 @@ void spawnGiveWeapons(int userid) {
 
 	// Strip all weapons
 	// Source: https://forums.alliedmods.net/showthread.php?t=133756
-	decl weapon;
-	decl slot;
+	int weapon = -1;
+	int slot = -1;
 	for (slot = CS_SLOT_PRIMARY ; slot <= CS_SLOT_GRENADE ; slot++) {
 		weapon = GetPlayerWeaponSlot(client, slot);
 		while (weapon != -1 && (GetEntPropEnt(weapon, Prop_Data, "m_hOwnerEntity") == client)) {
@@ -276,7 +279,7 @@ void spawnGiveWeapons(int userid) {
 	GivePlayerItem(client, "weapon_knife");
 
 	// Give level specific weapon
-	new String:giveWeapon[512];
+	char giveWeapon[512];
 	Format(giveWeapon, sizeof(giveWeapon), "weapon_%s", rawWeaponLevels[clientTeam == CS_TEAM_CT ? ctLevel : tLevel]);
 	GivePlayerItem(client, giveWeapon);
 }
@@ -302,8 +305,8 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
 		} else { // If not strip the player of weapons and give them the correct ones
 			// Strip all weapons
 			// Source: https://forums.alliedmods.net/showthread.php?t=133756
-			decl weapon;
-			decl slot;
+			int weapon = -1;
+			int slot = -1;
 			for (slot = CS_SLOT_PRIMARY ; slot <= CS_SLOT_GRENADE ; slot++) {
 				weapon = GetPlayerWeaponSlot(client, slot);
 				while (weapon != -1 && (GetEntPropEnt(weapon, Prop_Data, "m_hOwnerEntity") == client)) {
@@ -314,7 +317,7 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
 			GivePlayerItem(client, "weapon_knife");
 
 			// Give level specific weapon
-			new String:giveWeapon[512];
+			char giveWeapon[512];
 			Format(giveWeapon, sizeof(giveWeapon), "weapon_%s", rawWeaponLevels[clientTeam == CS_TEAM_CT ? ctLevel : tLevel]);
 			GivePlayerItem(client, giveWeapon);
 			return; // This should typically never happen but you never know
@@ -349,8 +352,8 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
 
 			// Strip all weapons
 			// Source: https://forums.alliedmods.net/showthread.php?t=133756
-			decl weapon;
-			decl slot;
+			int weapon = -1;
+			int slot = -1;
 			for (slot = CS_SLOT_PRIMARY ; slot <= CS_SLOT_GRENADE ; slot++) {
 				weapon = GetPlayerWeaponSlot(i, slot);
 				while (weapon != -1 && (GetEntPropEnt(weapon, Prop_Data, "m_hOwnerEntity") == i)) {
@@ -361,7 +364,7 @@ public Action Event_PlayerDeath(Event event, const char[] name, bool dontBroadca
 			GivePlayerItem(i, "weapon_knife");
 
 			// Give level specific weapon
-			new String:giveWeapon[512];
+			char giveWeapon[512];
 			Format(giveWeapon, sizeof(giveWeapon), "weapon_%s", rawWeaponLevels[clientTeam == CS_TEAM_CT ? ctLevel : tLevel]);
 			GivePlayerItem(i, giveWeapon);
 		}
